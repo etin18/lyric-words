@@ -131,6 +131,7 @@ function scan() {
         ['複習範圍-選歌曲', async () => { await page.click('[data-tab="review"]'); await page.click('[data-rs-kind="song"]'); }],
         ['複習卡-翻面', async () => { await page.click('[data-rs-kind="all"]'); await page.click('[data-rv-start]'); await page.click('[data-rv-flip]'); }],
         ['複習結束', async () => { await page.click('[data-rv-end]'); }],
+        ['還沒有歌詞的歌', async () => { await page.click('[data-tab="lib"]'); await page.click('[data-tab="lib"]'); await page.click('[data-work="wB"]'); await page.click('[data-song="s5"]'); }],
         ['設定', async () => { await page.click('#btn-gear'); }],
         ['空的歌詞本', async () => { await page.click('.sheet [data-close]'); await page.evaluate(() => { const s = window.__xc.state; ['works', 'songs', 'words', 'meanings'].forEach((e) => { s.data[e] = []; }); s.tab = 'lib'; s.lib = { workId: '', songId: '' }; s.review = null; window.__xc.render(); }); }]
       ];

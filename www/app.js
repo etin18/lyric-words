@@ -8,7 +8,7 @@
 'use strict';
 
 const L = window.Lyrics;
-const FRONT_VERSION = 'v2';
+const FRONT_VERSION = 'v3';
 const ENTITIES = ['works', 'songs', 'words', 'meanings'];
 const KK_KEYS = ['[', ']', 'ˋ', 'ˏ', 'æ', 'ɑ', 'ɛ', 'ə', 'ɚ', 'ɝ', 'ɪ', 'ɔ', 'ʊ', 'ʌ', 'θ', 'ð', 'ʃ', 'ʒ', 'ŋ'];
 const FONT_MIN = 14, FONT_MAX = 28;
@@ -373,7 +373,7 @@ function viewWork() {
     <div class="card"><h3><span class="grow">歌曲</span>${songs.length > 1 ? `<button class="btn small ghost" data-sorting="${w.id}">${sorting ? '完成' : '排序'}</button>` : ''}</h3>
       ${songs.length ? songs.map((s, i) => {
         const n = learningCount([s.id]);
-        return `<div class="item" ${sorting ? '' : `data-song="${s.id}"`}><span class="num">${i + 1}</span><div class="main"><div class="t">${esc(s.title)}</div><div class="s">${n ? `${n} 個字在學` : '還沒有在學的字'}${s.translation ? ' · 有翻譯' : ''}</div></div>${sorting ? moveBtns('songs', s.id, i, songs.length) : '<span class="go">›</span>'}</div>`;
+        return `<div class="item" ${sorting ? '' : `data-song="${s.id}"`}><span class="num">${i + 1}</span><div class="main"><div class="t">${esc(s.title)}</div><div class="s">${!L.splitLines(s.lyrics).some(L.isLyric) ? '還沒有歌詞' : `${n ? `${n} 個字在學` : '還沒有在學的字'}${s.translation ? ' · 有翻譯' : ''}`}</div></div>${sorting ? moveBtns('songs', s.id, i, songs.length) : '<span class="go">›</span>'}</div>`;
       }).join('') : '<p class="hint" style="padding:8px 0">還沒有歌。按下面的按鈕，把歌詞貼進來。</p>'}
     </div>
     ${sorting ? '' : `<button class="btn" data-add-song>＋ 新增歌曲</button>
@@ -414,6 +414,16 @@ function viewSong() {
   const songs = songsOfWork(s.workId);
   const at = songs.findIndex((x) => x.id === s.id);
   const prev = songs[at - 1], next = songs[at + 1];
+  const nav = prev || next ? `<div class="btn-row">${prev ? `<button class="btn ghost" data-song="${prev.id}">‹ ${esc(prev.title)}</button>` : '<span style="flex:1"></span>'}${next ? `<button class="btn ghost" data-song="${next.id}">${esc(next.title)} ›</button>` : '<span style="flex:1"></span>'}</div>` : '';
+
+  // 先建好歌名、還沒貼歌詞的歌
+  if (!p.en.some(L.isLyric)) {
+    return `
+    <h2 class="song-title">${esc(s.title)}</h2>
+    <div class="card"><div class="empty" style="padding:18px 4px 8px">還沒有歌詞。<br>找到歌詞後，按下面的按鈕貼進來。</div>
+      <button class="btn" data-edit-song>貼上歌詞</button></div>
+    ${nav}`;
+  }
 
   // [ODYSSEUS] 這種整行小標：顯示成灰色小字，不能點
   const who = (l) => `<div class="who">${esc(l.trim().slice(1, -1).trim())}</div>`;
@@ -435,7 +445,7 @@ function viewSong() {
       <p class="hint" style="margin:-4px 2px 10px">英文 ${p.enCount} 行、中文 ${p.zhCount} 行，對不上，所以分開顯示。按右上角的筆編輯，讓有字的行數一樣就能逐行對照。</p>` : ''}
     ${!state.data.words.length && !zhView ? '<p class="hint" style="margin:0 2px 10px">點任何一個字，就能記下它的中文和 KK 音標。</p>' : ''}
     <div class="card ly" style="--fs:${state.font}px">${body}</div>
-    ${prev || next ? `<div class="btn-row">${prev ? `<button class="btn ghost" data-song="${prev.id}">‹ ${esc(prev.title)}</button>` : '<span style="flex:1"></span>'}${next ? `<button class="btn ghost" data-song="${next.id}">${esc(next.title)} ›</button>` : '<span style="flex:1"></span>'}</div>` : ''}`;
+    ${nav}`;
 }
 
 /* ==========================================================================

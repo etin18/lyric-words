@@ -55,7 +55,8 @@ module.exports = {
     { id: 's1', workId: 'wA', title: 'Morning on the Pier', order: 1, lyrics: S1, translation: S1_ZH, createdAt: iso(3) },
     { id: 's2', workId: 'wA', title: 'Little Light', order: 2, lyrics: S2, translation: '', createdAt: iso(4) },
     { id: 's3', workId: 'wA', title: 'Curtain Call', order: 3, lyrics: S3, translation: S3_ZH, createdAt: iso(5) },
-    { id: 's4', workId: 'wB', title: 'Kingdom of Glue', order: 1, lyrics: S4, translation: '', createdAt: iso(6) }
+    { id: 's4', workId: 'wB', title: 'Kingdom of Glue', order: 1, lyrics: S4, translation: '', createdAt: iso(6) },
+    { id: 's5', workId: 'wB', title: 'Paper Moon Waltz', order: 2, lyrics: '', translation: '', createdAt: iso(7) }
   ],
   words: [
     { id: 'k1', text: 'yearn', kind: 'word', zh: '渴望', kk: '[jɝn]', note: 'yearn for + 名詞：渴望得到…', status: 'learning', songId: 's1', createdAt: iso(10) },
