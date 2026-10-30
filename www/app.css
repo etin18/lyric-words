@@ -226,6 +226,9 @@ main#view { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 4px 14px 24p
 .ln.flash { background: var(--pick); }
 .zh-only { font-size: .86em; line-height: 1.75; overflow-wrap: anywhere; }
 .stanza { height: .8em; }
+/* [ODYSSEUS] 這種小標：誰在唱 */
+.who { font-size: .62em; font-weight: 600; letter-spacing: .08em; color: var(--muted); line-height: 1.4; margin: .5em 0 .15em; overflow-wrap: anywhere; }
+.ly > .who:first-child { margin-top: 0; }
 
 /* 字：可以點。記過的單字＝實線底線；片語＝虛線，畫得低一點，兩條同時在時都看得到 */
 .w { cursor: pointer; border-radius: 4px; }

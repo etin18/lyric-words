@@ -8,7 +8,7 @@
 'use strict';
 
 const L = window.Lyrics;
-const FRONT_VERSION = 'v1';
+const FRONT_VERSION = 'v2';
 const ENTITIES = ['works', 'songs', 'words', 'meanings'];
 const KK_KEYS = ['[', ']', 'ˋ', 'ˏ', 'æ', 'ɑ', 'ɛ', 'ə', 'ɚ', 'ɝ', 'ɪ', 'ɔ', 'ʊ', 'ʌ', 'θ', 'ð', 'ʃ', 'ʒ', 'ŋ'];
 const FONT_MIN = 14, FONT_MAX = 28;
@@ -415,11 +415,12 @@ function viewSong() {
   const at = songs.findIndex((x) => x.id === s.id);
   const prev = songs[at - 1], next = songs[at + 1];
 
+  // [ODYSSEUS] 這種整行小標：顯示成灰色小字，不能點
+  const who = (l) => `<div class="who">${esc(l.trim().slice(1, -1).trim())}</div>`;
   const body = zhView
-    ? p.zh.map((l) => (l.trim() ? `<div class="zh-only">${esc(l)}</div>` : '<div class="stanza"></div>')).join('')
-    : p.rows.map((r, l) => (r.en.trim()
-      ? `<div class="ln" data-ln="${l}"><div class="en">${lineHtml(r.en, l)}</div>${showZh && r.zh ? `<div class="zh">${esc(r.zh)}</div>` : ''}</div>`
-      : '<div class="stanza"></div>')).join('');
+    ? p.zh.map((l) => (!l.trim() ? '<div class="stanza"></div>' : L.isLabel(l) ? who(l) : `<div class="zh-only">${esc(l)}</div>`)).join('')
+    : p.rows.map((r, l) => (!r.en.trim() ? '<div class="stanza"></div>' : L.isLabel(r.en) ? who(r.en)
+      : `<div class="ln" data-ln="${l}"><div class="en">${lineHtml(r.en, l)}</div>${showZh && r.zh ? `<div class="zh">${esc(r.zh)}</div>` : ''}</div>`)).join('');
 
   return `
     <h2 class="song-title">${esc(s.title)}</h2>

@@ -62,6 +62,14 @@ eq('片語在行尾被切掉不算', L.markLine('I said hold', dict).occs.length
 eq("in' 的字要一模一樣", [L.markLine("dreamin' away", dict).tokens[0].word && 'hit', L.markLine('dreaming away', dict).tokens[0].word], ['hit', null]);
 eq('記的時候大寫也比得到', L.markLine('the tide will turn', dict).tokens[1].word.id, 'w3');
 
+/* ---------- 小標（誰在唱） ---------- */
+eq('整行方括號是小標', ['[MIRA]', ' [MIRA, spoken] ', '[Chorus]', 'I [said] so', '[MIRA] hello', ''].map(L.isLabel), [true, true, true, false, false, false]);
+const WITH_LABELS = '[MIRA]\nline one\nline two\n\n[TOMAS & MIRA]\nline three';
+eq('小標不算行數', L.pairLines(WITH_LABELS, '一\n二\n三').mode, 'pair');
+eq('小標那行沒有翻譯', L.pairLines(WITH_LABELS, '一\n二\n三').rows.map((r) => r.zh), ['', '一', '二', '', '', '三']);
+eq('翻譯也有小標照樣對得上', L.pairLines(WITH_LABELS, '[米拉]\n一\n二\n三').rows.map((r) => r.zh), ['', '一', '二', '', '', '三']);
+eq('小標裡的字不算出現過', L.buildIndex([{ id: 'x', lyrics: '[MIRA]\nMira sings' }], [{ id: 'm', text: 'mira', kind: 'word' }]).occ.get('m').map((o) => o.line), [1]);
+
 /* ---------- 索引 ---------- */
 const songs = [
   { id: 's1', lyrics: 'I yearn\nI yearn again, I yearn\n\nhold on' },

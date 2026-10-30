@@ -3,11 +3,13 @@
  */
 const iso = (min) => new Date(Date.UTC(2026, 9, 1, 0, min)).toISOString();
 
-const S1 = `The harbor wakes before the sun,
+const S1 = `[MIRA]
+The harbor wakes before the sun,
 I yearn for roads I've never run.
 Hold on, hold on, the tide will turn,
 There's still a lantern left to burn.
 
+[TOMAS & MIRA]
 And if the morning finds me here,
 I'll trade my silence for a cheer.
 Don't let the shadows steal your song,

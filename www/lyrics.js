@@ -50,8 +50,12 @@ function splitLines(text) {
   return out;
 }
 
+/** 整行是 [ ] 包起來的，例如 [ODYSSEUS]、[Chorus]，是標示誰在唱的小標，不是歌詞 */
+const isLabel = (line) => /^\s*\[[^\]]*\]\s*$/.test(String(line == null ? '' : line));
+const isLyric = (line) => !!String(line == null ? '' : line).trim() && !isLabel(line);
+
 /**
- * 英文與中文翻譯配對。空行不算行數（翻譯常常沒有分段）。
+ * 英文與中文翻譯配對。空行、小標都不算行數（翻譯常常沒有分段，也不一定有小標）。
  *   none：沒有翻譯
  *   pair：有字的行數一樣，逐行對照；rows[i].zh 是第 i 行英文的翻譯
  *   split：行數對不上，分開顯示
@@ -60,12 +64,12 @@ function splitLines(text) {
 function pairLines(lyrics, translation) {
   const en = splitLines(lyrics);
   const zhAll = splitLines(translation);
-  const zh = zhAll.filter((l) => l.trim());
-  const enCount = en.filter((l) => l.trim()).length;
+  const zh = zhAll.filter(isLyric);
+  const enCount = en.filter(isLyric).length;
   if (!zh.length) return { mode: 'none', rows: en.map((l) => ({ en: l, zh: '' })), en, zh: [], enCount, zhCount: 0 };
   if (zh.length !== enCount) return { mode: 'split', rows: en.map((l) => ({ en: l, zh: '' })), en, zh: zhAll, enCount, zhCount: zh.length };
   let k = 0;
-  return { mode: 'pair', rows: en.map((l) => ({ en: l, zh: l.trim() ? zh[k++] : '' })), en, zh: zhAll, enCount, zhCount: zh.length };
+  return { mode: 'pair', rows: en.map((l) => ({ en: l, zh: isLyric(l) ? zh[k++] : '' })), en, zh: zhAll, enCount, zhCount: zh.length };
 }
 
 /** 單字表整理成查表用的形狀：單字用 key 查，片語用第一個字查 */
@@ -121,7 +125,7 @@ function buildIndex(songs, words) {
     const set = new Set();
     songWords.set(song.id, set);
     splitLines(song.lyrics).forEach((line, l) => {
-      if (!line.trim()) return;
+      if (!isLyric(line)) return;
       const { tokens, occs } = markLine(line, dict);
       const add = (w) => {
         set.add(w.id);
@@ -137,7 +141,7 @@ function buildIndex(songs, words) {
   return { dict, occ, songWords };
 }
 
-const Lyrics = { norm, tokenize, keyOf, kindOf, splitLines, pairLines, makeDict, markLine, buildIndex };
+const Lyrics = { norm, tokenize, keyOf, kindOf, splitLines, isLabel, isLyric, pairLines, makeDict, markLine, buildIndex };
 if (typeof module !== 'undefined' && module.exports) module.exports = Lyrics;
 else root.Lyrics = Lyrics;
 })(typeof window !== 'undefined' ? window : globalThis);
